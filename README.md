@@ -12,5 +12,5 @@ The icons used in the plugin were taken from the [FatCow Web Hosting Icon Set](h
 - Google Chrome
 - Firefox
 
-## Licence
+## License
 Licensed under the [MIT license](http://www.opensource.org/licenses/mit-license.php).
