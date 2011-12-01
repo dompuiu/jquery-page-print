@@ -22,7 +22,7 @@
 
 if (typeof Object.create !== 'function') {
     Object.create = function (o) {
-        "use strict";
+        'use strict';
         // optionally move this outside the declaration and 
         // into a closure if you need more speed.
         function F() {}
@@ -32,7 +32,7 @@ if (typeof Object.create !== 'function') {
 }
 
 (function ($) {
-    "use strict";
+    'use strict';
 
     /**
      * Main Class
@@ -90,7 +90,7 @@ if (typeof Object.create !== 'function') {
              *  The base CSS class to apply to this widget elements.
              *  @var string
              */
-            baseCls: "page-print",
+            baseCls: 'page-print',
 
             /**
              * If set to true all the elements and events are destroyed 
@@ -137,7 +137,7 @@ if (typeof Object.create !== 'function') {
             this.$elem = $(elem);
 
             // Open the print dialog for IE6.
-            if ($.browser.msie && $.browser.version === "6.0") {
+            if (this.isIE(6) === true) {
                 this.$elem.click(function () {
                     window.print();
                 });
@@ -148,6 +148,7 @@ if (typeof Object.create !== 'function') {
             // Open the modal window when the DOM element is clicked.
             this.$elem.click(function () {
                 that.showModal();
+                return false;
             });
 
             this.initKeyBindings();
@@ -223,7 +224,9 @@ if (typeof Object.create !== 'function') {
             $('body').css({overflow: 'hidden', height: '100%', width: '100%'});
             
             // Do the same thing to the html tag (because IE7).
-            $('html').css({overflow: 'hidden', height: '100%', width: '100%'});
+            if (this.isIE(7) === true) {
+                $('html').css({overflow: 'hidden', height: '100%', width: '100%'});
+            }
 
             // Show the modal mask first.
             this.$mask.stop().fadeTo('400', this.options.opacity, function () {
@@ -258,7 +261,9 @@ if (typeof Object.create !== 'function') {
                 .animate({top: topPos}, 400, 'linear', function () {
                     that.$modal.hide();
                     that.$mask.stop().fadeOut(function () {
-                        $('html').attr('style', '');
+                        if (that.isIE(7) === true) {
+                            $('html').attr('style', '');
+                        }
                         $('body').attr('style', '');
 
                         if (that.options.destroyOnHide) {
@@ -293,7 +298,7 @@ if (typeof Object.create !== 'function') {
             this.populateIframe();
 
             // Hide the modal when the ESC key is pressed.
-            $(document).bind("keydown.pp", function (e) {
+            $(document).bind('keydown.pp', function (e) {
                 if (!that.$modal.is(':visible')) {
                     return true;
                 }
@@ -465,19 +470,32 @@ if (typeof Object.create !== 'function') {
          * @return void
          */
         destroy: function () {
-            $(document).unbind("keydown.pp");
+            $(document).unbind('keydown.pp');
             $('a', this.$controls).unbind('click.ppCtrls');
 
             this.$modal.remove();
             this.$modal = null;
 
-            this.$mask.unbind("click.ppMask");
+            this.$mask.unbind('click.ppMask');
             this.$mask.remove();
+        },
+
+        /**
+         * Check the IE version.
+         * @param number The IE version to check.
+         * @return boolean
+         */        
+        isIE: function (version) {
+            if ($.browser.msie && $.browser.version === version + '.0') {
+                return true;
+            }
+            
+            return false;
         }
     };
 
     // Start the plugin.
-    $.fn.paperPrint = function (options) {
+    $.fn.pagePrint = function (options) {
         // Don't act on absent elements -via Paul Irish's advice.
         if (this.length) {
             return this.each(function () {
