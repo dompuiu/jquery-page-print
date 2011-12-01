@@ -16,7 +16,7 @@ In order to use this plugin you must insert into the page the followings:
 You can initialize the plugin by calling pagePrint function on any jQuery collection.  
 
 **Example:**  
-``$('<a href="#">Print this page</a>').prependTo('body').css({position: 'absolute', top: 0}).pagePrint()``.
+``$('<a href="#">Print this page</a>').prependTo('body').css({position: 'absolute', top: 0}).pagePrint();``.
 
 ## Config Options
 The following config options can be sent when calling the plugin:
