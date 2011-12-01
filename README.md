@@ -8,15 +8,18 @@ The icons used in the plugin were taken from the [FatCow Web Hosting Icon Set](h
 
 ## How To Use
 In order to use this plugin you must insert into the page the followings:
+
 - The jQuery script file;
 - The plugin file;
 - The plugin dependencies: CSS file and sprite image.
 
-You can initialize the plugin by calling pagePrint function on any jQuery collection.
-Example: $('<a href="#">Print this page</a>').prependTo('body').css({position: 'absolute', top: 0}).pagePrint().
+You can initialize the plugin by calling pagePrint function on any jQuery collection.  
+#Example:#  
+$('<a href="#">Print this page</a>').prependTo('body').css({position: 'absolute', top: 0}).pagePrint().
 
 ## Config Options
 The following config options can be sent when calling the plugin:
+
 - backgroundColor: the background color of the opened modal window (default: '#fff');
 - baseCls: the base CSS class to apply to this widget elements (default: 'page-print');
 - destroyOnHide: clean the DOM of the created elements and events (default: false);
