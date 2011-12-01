@@ -14,7 +14,8 @@ In order to use this plugin you must insert into the page the followings:
 - The plugin dependencies: CSS file and sprite image.
 
 You can initialize the plugin by calling pagePrint function on any jQuery collection.  
-*Example:*  
+
+**Example:**  
 $('<a href="#">Print this page</a>').prependTo('body').css({position: 'absolute', top: 0}).pagePrint().
 
 ## Config Options
