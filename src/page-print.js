@@ -222,7 +222,7 @@ if (typeof Object.create !== 'function') {
 
             // Disable body scrolling.
             $('body').css({overflow: 'hidden', height: '100%', width: '100%'});
-            
+
             // Do the same thing to the html tag (because IE7).
             if (this.isIE(7) === true) {
                 $('html').css({overflow: 'hidden', height: '100%', width: '100%'});
@@ -449,9 +449,9 @@ if (typeof Object.create !== 'function') {
             frameBody.append(content.clone());
 
             // Append the styles in the iframe. Change their media type to all.
-            stylesSelector = 'head link[rel="stylesheet"][media="all"]'; 
-            stylesSelector += ', head link[rel="stylesheet"][media*="print"]'; 
-            stylesSelector += ', head link[rel="stylesheet"]:not([media])'; 
+            stylesSelector = 'head link[rel="stylesheet"][media="all"]';
+            stylesSelector += ', head link[rel="stylesheet"][media*="print"]';
+            stylesSelector += ', head link[rel="stylesheet"]:not([media])';
             styles = $(stylesSelector).clone().each(function () {
                 $(this).attr('media', 'all');
             });
@@ -484,12 +484,12 @@ if (typeof Object.create !== 'function') {
          * Check the IE version.
          * @param number The IE version to check.
          * @return boolean
-         */        
+         */
         isIE: function (version) {
             if ($.browser.msie && $.browser.version === version + '.0') {
                 return true;
             }
-            
+
             return false;
         }
     };
