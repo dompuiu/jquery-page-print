@@ -19,7 +19,7 @@ You can initialize the plugin by calling pagePrint function on any jQuery collec
 ``$('<a href="#">Print this page</a>').prependTo('body').css({position: 'absolute', top: 0}).pagePrint();``.
 
 **Demo:**  
-You can see a demo [here](http://dompuiu.github.com/jquery-page-print/demo/index.html)
+You can see a demo [here](http://dompuiu.github.com/jquery-page-print/demo/index.html).
 
 ## Config Options
 The following config options can be sent when calling the plugin:
