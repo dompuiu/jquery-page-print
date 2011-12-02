@@ -191,9 +191,10 @@ if (typeof Object.create !== 'function') {
 
                 if (e.keyCode === 80 && isCtrl === true) {
                     e.preventDefault();
+                    e.stopPropagation();
 
                     // For IE the original event keycode must be overwritten.
-                    if (typeof event !== 'undefined') {
+                    if (that.isIE() === true) {
                         event.keyCode = 0;
                     }
 
@@ -482,10 +483,14 @@ if (typeof Object.create !== 'function') {
 
         /**
          * Check the IE version.
-         * @param number The IE version to check.
+         * @param number version The IE version to check.
          * @return boolean
          */
         isIE: function (version) {
+            if ($.browser.msie && !version) {
+                return true;
+            }
+
             if ($.browser.msie && $.browser.version === version + '.0') {
                 return true;
             }
