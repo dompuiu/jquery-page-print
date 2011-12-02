@@ -1,0 +1,35 @@
+.page-print-controls {
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    background: rgba(250,250,250,0.75);
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    left: 50%;
+    margin: 0 0 0 -81px;
+    padding: 5px 0;
+}
+
+.page-print-controls a {
+    color: #fff;
+    display: block;
+    filter: alpha(opacity=50);
+    float: left;
+    height: 32px;
+    opacity: .5;
+    text-decoration: none;
+    text-indent: -999em;
+    width: 80px;
+}
+
+.page-print-controls a:hover {
+    filter: alpha(opacity=100);
+    opacity: 1;
+}
+
+.page-print-controls .print {
+    background: url(images/action-icons.png) no-repeat top center;
+}
+    
+.page-print-controls .close {
+    background: url(images/action-icons.png) no-repeat bottom center;
+}
