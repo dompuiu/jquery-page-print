@@ -36,6 +36,7 @@ The following config options can be sent when calling the plugin:
 - Internet Explorer 7, 8 and 9
 - Google Chrome
 - Firefox
+- Opera
 
 ## License
 Licensed under the [MIT license](http://www.opensource.org/licenses/mit-license.php).
