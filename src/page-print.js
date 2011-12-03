@@ -183,6 +183,7 @@ if (typeof Object.create !== 'function') {
                         '.' + this.options.baseCls + '-modal {' +
                             'display: none !important;' +
                         '}' +
+                        'html, body { overflow: inherit; height: inherit }' +
                     '}' +
                     '</style>'
             );
