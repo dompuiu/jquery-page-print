@@ -88,6 +88,14 @@ if (typeof Object.create !== 'function') {
         $frameBody: null,
 
         /**
+         * Flag that shows if the modal hiding process is in progress.
+         * Used because a Safari for Mac Bug: the keydown binding added to the 
+         * document is called more than once.
+         * @var boolean
+         */
+        hiding: false,
+
+        /**
          * The option config object.
          * @var Object
          */
@@ -185,7 +193,7 @@ if (typeof Object.create !== 'function') {
 
         /**
          * Overwrite browser default functionality. 
-         * Capture the CTRL + P keys and show the modal. 
+         * Capture the "CTRL + P" or "Command + P" keys and show the modal. 
          * @return void
          */
         initKeyBindings: function () {
@@ -198,7 +206,7 @@ if (typeof Object.create !== 'function') {
                     return true;
                 }
 
-                if (e.ctrlKey) {
+                if (e.ctrlKey === true || e.keyCode === 91 || e.keyCode === 93) {
                     isCtrl = true;
                 }
 
@@ -215,7 +223,7 @@ if (typeof Object.create !== 'function') {
                     return false;
                 }
             }).keyup(function (e) {
-                if (e.ctrlKey) {
+                if (e.ctrlKey === true || e.keyCode === 91 || e.keyCode === 93) {
                     isCtrl = false;
                 }
             });
@@ -269,7 +277,7 @@ if (typeof Object.create !== 'function') {
          */
         hideModal: function () {
             var that = this, topPos = -$(window).height() + 100;
-
+            this.hiding = true;
             this.$controls.fadeOut('slow');
             this.$modal
                 .animate({top: topPos}, 400, 'linear', function () {
@@ -279,6 +287,7 @@ if (typeof Object.create !== 'function') {
                             $('html').attr('style', '');
                         }
                         that.$body.attr('style', '');
+                        that.hiding = false;
 
                         if (that.options.destroyOnHide) {
                             that.destroy();
@@ -319,7 +328,7 @@ if (typeof Object.create !== 'function') {
 
             // Hide the modal when the ESC key is pressed.
             $(document).add(this.$frameDocument).bind('keydown.pp', function (e) {
-                if (!that.$modal.is(':visible')) {
+                if (!that.$modal.is(':visible') || that.hiding === true) {
                     return true;
                 }
 
