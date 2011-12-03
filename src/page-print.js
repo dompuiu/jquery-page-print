@@ -309,7 +309,7 @@ if (typeof Object.create !== 'function') {
 
             // Add the current page to the iframe.
             this.populateIframe();
-            
+
             // Add to the document the element that will be focused.
             if ($.browser.opera === true) {
                 this.$frameBody.prepend(this.$modalAnchor);
@@ -481,7 +481,7 @@ if (typeof Object.create !== 'function') {
             stylesSelector += ', head style[media="all"]';
             stylesSelector += ', head style[media*="print"]';
             stylesSelector += ', head style:not([media])';
-            
+
             styles = $(stylesSelector).clone().each(function () {
                 $(this).attr('media', 'all');
             });
