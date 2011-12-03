@@ -46,6 +46,12 @@ if (typeof Object.create !== 'function') {
         $elem: null,
 
         /**
+         * The document body reference. 
+         * @var JQueryRef
+         */
+        $body: null,
+
+        /**
          * The modal window reference.
          * @var JQueryRef 
          */
@@ -74,6 +80,12 @@ if (typeof Object.create !== 'function') {
          * @var JQueryRef 
          */
         $frameDocument: null,
+
+        /**
+         * The frame body reference.
+         * @var JQueryRef 
+         */
+        $frameBody: null,
 
         /**
          * The option config object.
@@ -133,8 +145,9 @@ if (typeof Object.create !== 'function') {
             // Mix in the passed in options with the default options.
             this.options = $.extend({}, this.options, options);
 
-            // Save the element as jQuery reference.
+            // Save the target element and the document body as jQuery references.
             this.$elem = $(elem);
+            this.$body = $('body');
 
             // Open the print dialog for IE6.
             if (this.isIE(6) === true) {
@@ -222,7 +235,7 @@ if (typeof Object.create !== 'function') {
             }
 
             // Disable body scrolling.
-            $('body').css({overflow: 'hidden', height: '100%', width: '100%'});
+            this.$body.css({overflow: 'hidden', height: '100%', width: '100%'});
 
             // Do the same thing to the html tag (because IE7).
             if (this.isIE(7) === true) {
@@ -232,7 +245,7 @@ if (typeof Object.create !== 'function') {
             // Show the modal mask first.
             this.$mask.stop().fadeTo('400', this.options.opacity, function () {
                 // Determine the height of the iframe.
-                var height = $('body', that.$frameDocument).height();
+                var height = that.$frameBody.height();
                 if (height > 0) {
                     that.$frame.height(height);
                 }
@@ -265,7 +278,7 @@ if (typeof Object.create !== 'function') {
                         if (that.isIE(7) === true) {
                             $('html').attr('style', '');
                         }
-                        $('body').attr('style', '');
+                        that.$body.attr('style', '');
 
                         if (that.options.destroyOnHide) {
                             that.destroy();
@@ -288,26 +301,32 @@ if (typeof Object.create !== 'function') {
             this.buildControlContainer();
             this.buildIFrame();
 
-            // Append them to the body.
+            // Append the elements to the body.
             this.$modal
-                .append(this.$modalAnchor)
                 .append(this.$controls)
                 .append(this.$frame)
-                .appendTo('body');
+                .appendTo(this.$body);
 
             // Add the current page to the iframe.
             this.populateIframe();
+            
+            // Add focus handler to the document.
+            if ($.browser.opera === true) {
+                this.$frameBody.prepend(this.$modalAnchor);
+            } else {
+                this.$modal.prepend(this.$modalAnchor);
+            }
 
             // Hide the modal when the ESC key is pressed.
-            $(document).bind('keydown.pp', function (e) {
+            $(document).add(this.$frameDocument).bind('keydown.pp', function (e) {
                 if (!that.$modal.is(':visible')) {
                     return true;
                 }
 
-			    if (e.keyCode === 27) {
+                if (e.keyCode === 27) {
                     that.hideModal();
                 }
-			});
+            });
 
         },
 
@@ -393,11 +412,11 @@ if (typeof Object.create !== 'function') {
             this.$mask = $(
                 '<div class="' + this.options.baseCls + '-mask"></div>'
             ).css(css);
-            this.$mask.hide().appendTo('body');
+            this.$mask.hide().appendTo(this.$body);
 
             this.$mask.bind("click.ppMask", function () {
                 that.hideModal();
-			});
+            });
 
         },
 
@@ -427,7 +446,7 @@ if (typeof Object.create !== 'function') {
          * @return void
          */
         populateIframe: function () {
-            var content, frame, frameDocument, frameBody, styles, stylesSelector;
+            var content, frame, frameDocument, styles, stylesSelector;
 
             frame = this.$frame.get(0);
             frameDocument = frame.contentWindow || frame.contentDocument;
@@ -445,9 +464,9 @@ if (typeof Object.create !== 'function') {
             );
             frameDocument.document.close();
 
-            frameBody = $('body', this.$frameDocument).css('height', 'auto');
-            content = $('body').children().not('script');
-            frameBody.append(content.clone());
+            this.$frameBody = $('body', this.$frameDocument).css('height', 'auto');
+            content = this.$body.children().not('script');
+            this.$frameBody.append(content.clone());
 
             // Append the styles in the iframe. Change their media type to all.
             stylesSelector = 'head link[rel="stylesheet"][media="all"]';
