@@ -310,7 +310,7 @@ if (typeof Object.create !== 'function') {
             // Add the current page to the iframe.
             this.populateIframe();
             
-            // Add focus handler to the document.
+            // Add to the document the element that will be focused.
             if ($.browser.opera === true) {
                 this.$frameBody.prepend(this.$modalAnchor);
             } else {
@@ -468,10 +468,20 @@ if (typeof Object.create !== 'function') {
             content = this.$body.children().not('script');
             this.$frameBody.append(content.clone());
 
+            // Search for style tags that have a media="print" attribute.
+            // Change it to media="all".
+            $('style[media*="print"]', this.$frameBody).each(function () {
+                $(this).attr('media', 'all');
+            });
+
             // Append the styles in the iframe. Change their media type to all.
             stylesSelector = 'head link[rel="stylesheet"][media="all"]';
             stylesSelector += ', head link[rel="stylesheet"][media*="print"]';
             stylesSelector += ', head link[rel="stylesheet"]:not([media])';
+            stylesSelector += ', head style[media="all"]';
+            stylesSelector += ', head style[media*="print"]';
+            stylesSelector += ', head style:not([media])';
+            
             styles = $(stylesSelector).clone().each(function () {
                 $(this).attr('media', 'all');
             });
