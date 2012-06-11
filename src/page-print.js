@@ -88,6 +88,14 @@ if (typeof Object.create !== 'function') {
         $frameBody: null,
 
         /**
+         * Flag that shows if the modal hiding process is in progress.
+         * Used because a Safari for Mac Bug: the keydown binding added to the 
+         * document is called more than once.
+         * @var boolean
+         */
+        hiding: false,
+
+        /**
          * The option config object.
          * @var Object
          */
@@ -175,6 +183,7 @@ if (typeof Object.create !== 'function') {
                         '.' + this.options.baseCls + '-modal {' +
                             'display: none !important;' +
                         '}' +
+                        'html, body { overflow: inherit; height: inherit }' +
                     '}' +
                     '</style>'
             );
@@ -185,7 +194,7 @@ if (typeof Object.create !== 'function') {
 
         /**
          * Overwrite browser default functionality. 
-         * Capture the CTRL + P keys and show the modal. 
+         * Capture the "CTRL + P" or "Command + P" keys and show the modal. 
          * @return void
          */
         initKeyBindings: function () {
@@ -198,7 +207,7 @@ if (typeof Object.create !== 'function') {
                     return true;
                 }
 
-                if (e.ctrlKey) {
+                if (e.ctrlKey === true || e.keyCode === 91 || e.keyCode === 93) {
                     isCtrl = true;
                 }
 
@@ -215,7 +224,7 @@ if (typeof Object.create !== 'function') {
                     return false;
                 }
             }).keyup(function (e) {
-                if (e.ctrlKey) {
+                if (e.ctrlKey === true || e.keyCode === 91 || e.keyCode === 93) {
                     isCtrl = false;
                 }
             });
@@ -269,7 +278,7 @@ if (typeof Object.create !== 'function') {
          */
         hideModal: function () {
             var that = this, topPos = -$(window).height() + 100;
-
+            this.hiding = true;
             this.$controls.fadeOut('slow');
             this.$modal
                 .animate({top: topPos}, 400, 'linear', function () {
@@ -279,6 +288,7 @@ if (typeof Object.create !== 'function') {
                             $('html').attr('style', '');
                         }
                         that.$body.attr('style', '');
+                        that.hiding = false;
 
                         if (that.options.destroyOnHide) {
                             that.destroy();
@@ -309,8 +319,8 @@ if (typeof Object.create !== 'function') {
 
             // Add the current page to the iframe.
             this.populateIframe();
-            
-            // Add focus handler to the document.
+
+            // Add to the document the element that will be focused.
             if ($.browser.opera === true) {
                 this.$frameBody.prepend(this.$modalAnchor);
             } else {
@@ -319,7 +329,7 @@ if (typeof Object.create !== 'function') {
 
             // Hide the modal when the ESC key is pressed.
             $(document).add(this.$frameDocument).bind('keydown.pp', function (e) {
-                if (!that.$modal.is(':visible')) {
+                if (!that.$modal.is(':visible') || that.hiding === true) {
                     return true;
                 }
 
@@ -468,14 +478,35 @@ if (typeof Object.create !== 'function') {
             content = this.$body.children().not('script');
             this.$frameBody.append(content.clone());
 
+            // Search for style tags that have a media="print" attribute.
+            // Change it to media="all".
+            $('style[media*="print"]', this.$frameBody).each(function () {
+                $(this).attr('media', 'all');
+            });
+
             // Append the styles in the iframe. Change their media type to all.
             stylesSelector = 'head link[rel="stylesheet"][media="all"]';
             stylesSelector += ', head link[rel="stylesheet"][media*="print"]';
             stylesSelector += ', head link[rel="stylesheet"]:not([media])';
+            stylesSelector += ', head style[media="all"]';
+            stylesSelector += ', head style[media*="print"]';
+            stylesSelector += ', head style:not([media])';
+
             styles = $(stylesSelector).clone().each(function () {
                 $(this).attr('media', 'all');
             });
             $('head', this.$frameDocument).append(styles);
+            
+            // In IE7 and IE8 the styles appended into the IFRAME are not applied 
+            // even if they have the correct href. Reapply the styles from link tags.
+            if ($.browser.msie && parseInt($.browser.version, 10) < 9) {
+                styles.each(function () {
+                    var link = $(this), href = link.attr('href');
+                    if (href) {
+                        link.attr('href', href);
+                    }
+                });
+            }
 
             // Disable all links in the iframe.
             $('a', this.$frameDocument).click(function (e) {
