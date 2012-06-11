@@ -496,6 +496,17 @@ if (typeof Object.create !== 'function') {
                 $(this).attr('media', 'all');
             });
             $('head', this.$frameDocument).append(styles);
+            
+            // In IE7 and IE8 the styles appended into the IFRAME are not applied 
+            // even if they have the correct href. Reapply the styles from link tags.
+            if ($.browser.msie && parseInt($.browser.version, 10) < 9) {
+                styles.each(function () {
+                    var link = $(this), href = link.attr('href');
+                    if (href) {
+                        link.attr('href', href);
+                    }
+                });
+            }
 
             // Disable all links in the iframe.
             $('a', this.$frameDocument).click(function (e) {
